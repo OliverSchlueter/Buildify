@@ -39,11 +39,14 @@ func main() {
 
 	defer resultFile.Close()
 
-	println("Result file: " + resultFile.Name())
-
 	// get git hash
-	hash := getGitHash()
-	println("Hash: " + hash)
+	gitHash, gitMessage := getGitInfo()
+
+	println("----------------------------------------------------------")
+	println("File: " + resultFile.Name())
+	println("Hash: " + gitHash)
+	println("Message: " + gitMessage)
+	println("----------------------------------------------------------")
 }
 
 func createWorkingDir() error {
@@ -76,19 +79,27 @@ func getResultFile(path string) (error, *os.File) {
 	return err, file
 }
 
-func getGitHash() string {
-	log.Println("Getting the commit hash")
+func getGitInfo() (string, string) {
+	log.Println("Getting information about the latest commit")
 	gitApp, err := git.PlainOpen("work")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	gitHead, err := gitApp.Head()
+	head, err := gitApp.Head()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	hash := gitHead.Hash()
+	hash := head.Hash()
 
-	return hash.String()
+	commit, err := gitApp.CommitObject(hash)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	message := commit.Message
+	message = message[0 : len(message)-1] // remove last '\n'
+
+	return hash.String(), message
 }
