@@ -1,105 +1,19 @@
 package main
 
 import (
+	"Buildify/builds"
 	"flag"
-	"github.com/go-git/go-git/v5"
-	"log"
-	"os"
-	"os/exec"
+)
+
+var (
+	buildScriptPath *string
+	resultPath      *string
 )
 
 func main() {
-	buildScriptPath := flag.String("build-script", "build.bat", "path to the build script")
-	resultPath := flag.String("result", "work/build/libs/StackPP.jar", "path to the result executable file")
+	buildScriptPath = flag.String("build-script", "build.bat", "path to the build script")
+	resultPath = flag.String("result", "work/build/libs/StackPP.jar", "path to the result executable file")
 	flag.Parse()
 
-	// create working directory
-	err := createWorkingDir()
-	if err != nil && !os.IsExist(err) {
-		log.Fatal(err)
-	}
-
-	dir := os.Getenv("=D:") + "\\"
-
-	// build project
-	err, built := buildProject(dir + *buildScriptPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if !built {
-		log.Fatal("Could not build project")
-	}
-
-	// get result file
-	err, resultFile := getResultFile(*resultPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer resultFile.Close()
-
-	// get git hash
-	gitHash, gitMessage := getGitInfo()
-
-	println("----------------------------------------------------------")
-	println("File: " + resultFile.Name())
-	println("Hash: " + gitHash)
-	println("Message: " + gitMessage)
-	println("----------------------------------------------------------")
-}
-
-func createWorkingDir() error {
-	log.Println("Creating working directory (./work/)")
-	err := os.Mkdir("work", os.ModePerm)
-	return err
-}
-
-func buildProject(buildScript string) (error, bool) {
-	log.Println("Building the project (" + buildScript + ")")
-	command := exec.Command(buildScript)
-	//command.Stdout = os.Stdout
-
-	err := command.Run()
-	if err != nil {
-		return err, false
-	}
-
-	success := command.ProcessState.ExitCode() == 0
-	return nil, success
-}
-
-func getResultFile(path string) (error, *os.File) {
-	log.Println("Getting the result file")
-	file, err := os.OpenFile(path, 0, os.ModePerm)
-	if err != nil {
-		log.Fatal("Could not find result file: " + path)
-	}
-
-	return err, file
-}
-
-func getGitInfo() (string, string) {
-	log.Println("Getting information about the latest commit")
-	gitApp, err := git.PlainOpen("work")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	head, err := gitApp.Head()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	hash := head.Hash()
-
-	commit, err := gitApp.CommitObject(hash)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	message := commit.Message
-	message = message[0 : len(message)-1] // remove last '\n'
-
-	return hash.String(), message
+	builds.BuildBuild(buildScriptPath, resultPath)
 }
