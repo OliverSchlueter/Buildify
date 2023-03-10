@@ -5,4 +5,4 @@ CLS
 go test .
 
 :: build the program
-go build -o bin/buildify.exe .
+go build -buildmode exe -o bin/buildify.exe
