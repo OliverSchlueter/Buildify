@@ -1,10 +1,12 @@
 package builds
 
 import (
+	"Buildify/util"
 	"github.com/go-git/go-git/v5"
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"time"
 )
 
@@ -18,6 +20,7 @@ func BuildBuild(buildScriptPath, resultPath *string) Build {
 	dir := os.Getenv("=D:") + "\\"
 
 	// build project
+	buildId := len(Builds) + 1
 	buildTime := time.Now().UnixMilli()
 
 	err, built := buildProject(dir + *buildScriptPath)
@@ -30,7 +33,7 @@ func BuildBuild(buildScriptPath, resultPath *string) Build {
 	}
 
 	// get result file
-	err, resultFile := getResultFile(*resultPath)
+	err, resultFile := getResultFile(*resultPath, buildId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,12 +44,14 @@ func BuildBuild(buildScriptPath, resultPath *string) Build {
 	gitHash, gitMessage := getGitInfo()
 
 	println("----------------------------------------------------------")
+	println("Id: " + strconv.Itoa(buildId))
+	println("Time: " + time.UnixMilli(buildTime).String())
 	println("File: " + resultFile.Name())
 	println("Hash: " + gitHash)
 	println("Message: " + gitMessage)
 	println("----------------------------------------------------------")
 
-	b := Create(len(Builds)+1, buildTime, gitHash, gitMessage)
+	b := Create(buildId, buildTime, gitHash, gitMessage, resultFile.Name())
 
 	return b
 }
@@ -71,14 +76,42 @@ func buildProject(buildScript string) (error, bool) {
 	return nil, success
 }
 
-func getResultFile(path string) (error, *os.File) {
+func getResultFile(path string, buildId int) (error, *os.File) {
 	log.Println("Getting the result file")
 	file, err := os.OpenFile(path, 0, os.ModePerm)
 	if err != nil {
 		log.Fatal("Could not find result file: " + path)
 	}
 
-	return err, file
+	defer file.Close()
+
+	stat, _ := file.Stat()
+	fileName := stat.Name()
+
+	// copy file
+	buildDir := "builds/"
+	err = os.Mkdir(buildDir, os.ModePerm)
+	if err != nil && !os.IsExist(err) {
+		return err, nil
+	}
+
+	buildDir = buildDir + "build-" + strconv.Itoa(buildId) + "/"
+	err = os.Mkdir(buildDir, os.ModePerm)
+	if err != nil && !os.IsExist(err) {
+		return err, nil
+	}
+
+	copiedFile, err := os.Create(buildDir + fileName)
+	if err != nil {
+		log.Fatal("Could not copy result file1")
+	}
+
+	err = util.FastCopyFile(file, copiedFile)
+	if err != nil {
+		log.Fatal("Could not copy result file")
+	}
+
+	return err, copiedFile
 }
 
 func getGitInfo() (string, string) {
