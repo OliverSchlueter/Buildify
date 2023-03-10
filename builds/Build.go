@@ -24,6 +24,12 @@ func Create(id int, time int64, hash string, message string) Build {
 	}
 
 	Builds = append(Builds, b)
+
+	err := SaveBuildsFile("builds/")
+	if err != nil {
+		log.Println("Could not save build metadata")
+	}
+
 	return b
 }
 
