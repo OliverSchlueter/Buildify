@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"time"
 )
 
 func BuildBuild(buildScriptPath, resultPath *string) Build {
@@ -17,6 +18,8 @@ func BuildBuild(buildScriptPath, resultPath *string) Build {
 	dir := os.Getenv("=D:") + "\\"
 
 	// build project
+	buildTime := time.Now().UnixMilli()
+
 	err, built := buildProject(dir + *buildScriptPath)
 	if err != nil {
 		log.Fatal(err)
@@ -43,7 +46,7 @@ func BuildBuild(buildScriptPath, resultPath *string) Build {
 	println("Message: " + gitMessage)
 	println("----------------------------------------------------------")
 
-	b := Create(len(Builds)+1, gitHash, gitMessage)
+	b := Create(len(Builds)+1, buildTime, gitHash, gitMessage)
 
 	return b
 }

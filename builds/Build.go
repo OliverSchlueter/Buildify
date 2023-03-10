@@ -10,13 +10,15 @@ var Builds []Build
 
 type Build struct {
 	Id      int
+	Time    int64
 	Hash    string
 	Message string
 }
 
-func Create(id int, hash string, message string) Build {
+func Create(id int, time int64, hash string, message string) Build {
 	b := Build{
 		Id:      id,
+		Time:    time,
 		Hash:    hash,
 		Message: message,
 	}
