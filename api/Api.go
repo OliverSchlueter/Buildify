@@ -37,12 +37,17 @@ func getBuildList() []BuildApi {
 	return apiBuilds
 }
 
-func Start(port int) {
+func Start(port int, admin util.AuthUser) {
 	router := gin.Default()
 	router.GET("/builds", apiBuilds)
 	router.GET("/build", apiBuild)
-	router.GET("/startBuild", apiStartBuild)
 	router.GET("/download", apiDownload)
+
+	startDownload := router.Group("/startBuild", gin.BasicAuth(map[string]string{
+		admin.Username: admin.Password,
+	}))
+
+	startDownload.GET("/", apiStartBuild)
 
 	err := router.Run("localhost:" + strconv.Itoa(port))
 	if err != nil {
