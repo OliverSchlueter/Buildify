@@ -8,7 +8,7 @@ Easy build and deploy system
 
 1. clone the repo ``git clone https://github.com/OliverSchlueter/Buildify.git``
 2. run ``make.bat``
-3. executable will be at: ``bin/buildify.exe``
+3. executable will be at: ``buildify-core/bin/buildify.exe``
 
 ### Other
 
