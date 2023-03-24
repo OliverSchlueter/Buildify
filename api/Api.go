@@ -38,6 +38,8 @@ func getBuildList() []BuildApi {
 }
 
 func Start(port int, admin util.AuthUser) {
+	gin.SetMode(gin.ReleaseMode)
+
 	router := gin.Default()
 	router.GET("/builds", apiBuilds)
 	router.GET("/build", apiBuild)
@@ -61,6 +63,10 @@ func apiBuilds(context *gin.Context) {
 
 func apiBuild(context *gin.Context) {
 	idStr := context.Request.URL.Query().Get("id")
+	if idStr == "" {
+		context.IndentedJSON(http.StatusNotFound, "Please provide a build id")
+		return
+	}
 
 	if idStr == "latest" {
 		context.IndentedJSON(http.StatusOK, toApiStruct(builds.Builds[len(builds.Builds)-1]))
@@ -90,6 +96,10 @@ func apiStartBuild(context *gin.Context) {
 
 func apiDownload(context *gin.Context) {
 	idStr := context.Request.URL.Query().Get("id")
+	if idStr == "" {
+		context.IndentedJSON(http.StatusNotFound, "Please provide a build id")
+		return
+	}
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -112,4 +122,6 @@ func apiDownload(context *gin.Context) {
 			return
 		}
 	}
+
+	context.IndentedJSON(http.StatusNotFound, "Could not find a build with this id")
 }
