@@ -16,9 +16,17 @@ Easy build and deploy system
 
 ## How to use
 
-### Run buildify with your config
+### Commandline arguments
 
-Example: gradle project
+``-build-script=<PATH>`` - This script will run everytime a new build is triggered
+
+``-result=<PATH>`` - This is where the downloadable built executable is
+
+``-port=<NUMBER>`` - The API will start on this port
+
+<br>
+
+**Example: java gradle project**
 
 How to start buildify:
 ``$ buildify.exe -build-script=build.bat -result=work/build/libs/myJar.jar -port=1337``
