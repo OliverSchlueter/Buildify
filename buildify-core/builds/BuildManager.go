@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func BuildBuild(buildScriptPath, resultPath *string) Build {
+func CreateBuild(buildScriptPath, resultPath *string) Build {
 	// create working directory
 	err := createWorkingDir()
 	if err != nil && !os.IsExist(err) {
@@ -43,14 +43,7 @@ func BuildBuild(buildScriptPath, resultPath *string) Build {
 	// get git hash
 	gitHash, gitMessage := getGitInfo()
 
-	println("----------------------------------------------------------")
-	println("Id: " + strconv.Itoa(buildId))
-	println("Time: " + time.UnixMilli(buildTime).String())
-	println("File: " + resultFile.Name())
-	println("Hash: " + gitHash)
-	println("Message: " + gitMessage)
-	println("----------------------------------------------------------")
-
+	log.Println("Finished build (#" + strconv.Itoa(buildId) + ")")
 	b := Create(buildId, buildTime, gitHash, gitMessage, resultFile.Name())
 
 	return b

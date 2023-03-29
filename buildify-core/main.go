@@ -23,6 +23,12 @@ func main() {
 		log.Println("Could not load build metadata file")
 	}
 
+	admin := getAdminUser()
+
+	api.Start(*port, admin)
+}
+
+func getAdminUser() util.AuthUser {
 	var admin util.AuthUser
 
 	adminAuthFile, err := os.OpenFile("admin_auth.json", os.O_RDWR, os.ModePerm)
@@ -57,5 +63,5 @@ func main() {
 		}
 	}
 
-	api.Start(*port, admin)
+	return admin
 }

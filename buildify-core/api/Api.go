@@ -89,7 +89,7 @@ func apiBuild(context *gin.Context) {
 }
 
 func apiStartBuild(context *gin.Context) {
-	build := builds.BuildBuild(util.BuildScriptPath, util.ResultPath)
+	build := builds.CreateBuild(util.BuildScriptPath, util.ResultPath)
 
 	context.IndentedJSON(http.StatusOK, toApiStruct(build))
 }
