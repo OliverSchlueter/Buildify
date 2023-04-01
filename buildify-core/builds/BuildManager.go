@@ -20,7 +20,13 @@ func CreateBuild(buildScriptPath, resultPath *string) Build {
 	dir := os.Getenv("=D:") + "\\"
 
 	// build project
-	buildId := len(Builds) + 1
+	var buildId int
+	if len(Builds) == 0 {
+		buildId = 0
+	} else {
+		buildId = Builds[len(Builds)-1].Id + 1
+	}
+
 	buildTime := time.Now().UnixMilli()
 
 	err, built := buildProject(dir + *buildScriptPath)
