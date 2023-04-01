@@ -4,7 +4,7 @@ Easy build and deploy system
 
 ## How to build from source
 
-### Windows[README.md](README.md)
+### Windows
 
 1. clone the repo ``git clone https://github.com/OliverSchlueter/Buildify.git``
 2. run ``make.bat``
