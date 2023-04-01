@@ -96,7 +96,15 @@ func apiBuild(context *gin.Context) {
 }
 
 func apiStartBuild(context *gin.Context) {
+	if builds.IsBuilding {
+		context.IndentedJSON(http.StatusLocked, "Please wait, there is already an ongoing build")
+		return
+	}
+
+	builds.IsBuilding = true
 	err, build := builds.CreateBuild(util.BuildScriptPath, util.ResultPath)
+	builds.IsBuilding = false
+
 	if err != nil {
 		context.IndentedJSON(http.StatusNotFound, "Something went wrong while building")
 		return

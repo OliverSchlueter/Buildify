@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+var IsBuilding bool = false
+
 func CreateBuild(buildScriptPath, resultPath *string) (error, *Build) {
 	// create working directory
 	err := createWorkingDir()
