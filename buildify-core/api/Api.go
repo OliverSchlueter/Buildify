@@ -51,6 +51,12 @@ func Start(port int, admin util.AuthUser) {
 
 	startDownload.GET("/", apiStartBuild)
 
+	deleteBuild := router.Group("/deleteBuild", gin.BasicAuth(map[string]string{
+		admin.Username: admin.Password,
+	}))
+
+	deleteBuild.GET("/", apiDeleteBuild)
+
 	err := router.Run("localhost:" + strconv.Itoa(port))
 	if err != nil {
 		log.Fatal("Could not start REST API")
@@ -119,6 +125,35 @@ func apiDownload(context *gin.Context) {
 			}
 
 			context.FileAttachment(build.ResultFilePath, stat.Name())
+			return
+		}
+	}
+
+	context.IndentedJSON(http.StatusNotFound, "Could not find a build with this id")
+}
+
+func apiDeleteBuild(context *gin.Context) {
+	idStr := context.Request.URL.Query().Get("id")
+	if idStr == "" {
+		context.IndentedJSON(http.StatusNotFound, "Please provide a build id")
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return
+	}
+
+	for index, build := range builds.Builds {
+		if build.Id == id {
+
+			err := builds.Delete(id, index)
+			if err != nil {
+				context.IndentedJSON(http.StatusInternalServerError, "Could not delete build")
+				return
+			}
+
+			context.IndentedJSON(http.StatusInternalServerError, "Deleted build #"+idStr)
 			return
 		}
 	}

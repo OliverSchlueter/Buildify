@@ -4,7 +4,7 @@ Easy build and deploy system
 
 ## How to build from source
 
-### Windows
+### Windows[README.md](README.md)
 
 1. clone the repo ``git clone https://github.com/OliverSchlueter/Buildify.git``
 2. run ``make.bat``
@@ -42,13 +42,15 @@ gradlew shadowJar
 cd ../
 ````
 
-### The API
+### The REST API
 
-```/builds``` - Shows all builds
+```/builds``` - Shows a list of all builds
 
-``/build?id=<number|latest>`` - Shows one build
+``/build?id=<number|latest>`` - Shows details about a build
 
-``/startBuild`` - Starts the process of creating a new build
+``/download?id=<number>`` - Downloads the output file of a build
 
-``/download?id=<number>`` - downloads the output file of a build
+``/startBuild`` - Starts the process of creating a new build _(auth required)_
+
+``/deleteBuild?id=<number>`` - Deletes a build _(auth required)_
 

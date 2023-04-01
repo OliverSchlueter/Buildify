@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strconv"
 )
 
 var Builds []Build
@@ -33,6 +34,24 @@ func Create(id int, time int64, hash string, message string, resultFilePath stri
 	}
 
 	return b
+}
+
+func Delete(id int, index int) error {
+	err := os.RemoveAll("builds/build-" + strconv.Itoa(id) + "/")
+	if err != nil {
+		log.Println("Could not delete build " + strconv.Itoa(id))
+		log.Println(err)
+		return err
+	}
+
+	Builds = append(Builds[:index], Builds[index+1:]...)
+
+	err = SaveBuildsFile("builds/")
+	if err != nil {
+		log.Println("Could not save build metadata")
+	}
+
+	return nil
 }
 
 func SaveBuildsFile(dir string) error {
