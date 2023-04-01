@@ -81,7 +81,8 @@ func apiBuild(context *gin.Context) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		log.Fatal(err)
+		context.IndentedJSON(http.StatusNotFound, "Please provide a valid build id")
+		return
 	}
 
 	for _, build := range builds.Builds {
@@ -95,9 +96,13 @@ func apiBuild(context *gin.Context) {
 }
 
 func apiStartBuild(context *gin.Context) {
-	build := builds.CreateBuild(util.BuildScriptPath, util.ResultPath)
+	err, build := builds.CreateBuild(util.BuildScriptPath, util.ResultPath)
+	if err != nil {
+		context.IndentedJSON(http.StatusNotFound, "Something went wrong while building")
+		return
+	}
 
-	context.IndentedJSON(http.StatusOK, toApiStruct(build))
+	context.IndentedJSON(http.StatusOK, toApiStruct(*build))
 }
 
 func apiDownload(context *gin.Context) {
@@ -109,6 +114,7 @@ func apiDownload(context *gin.Context) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+		context.IndentedJSON(http.StatusNotFound, "Please provide a valid build id")
 		return
 	}
 
@@ -141,6 +147,7 @@ func apiDeleteBuild(context *gin.Context) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+		context.IndentedJSON(http.StatusNotFound, "Please provide a valid build id")
 		return
 	}
 

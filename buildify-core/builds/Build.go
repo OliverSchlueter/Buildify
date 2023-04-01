@@ -17,7 +17,7 @@ type Build struct {
 	ResultFilePath string
 }
 
-func Create(id int, time int64, hash string, message string, resultFilePath string) Build {
+func Create(id int, time int64, hash string, message string, resultFilePath string) *Build {
 	b := Build{
 		Id:             id,
 		Time:           time,
@@ -31,9 +31,10 @@ func Create(id int, time int64, hash string, message string, resultFilePath stri
 	err := SaveBuildsFile("builds/")
 	if err != nil {
 		log.Println("Could not save build metadata")
+		return nil
 	}
 
-	return b
+	return &b
 }
 
 func Delete(id int, index int) error {
@@ -57,7 +58,7 @@ func Delete(id int, index int) error {
 func SaveBuildsFile(dir string) error {
 	decodedJson, err := json.MarshalIndent(Builds, "", "  ")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	err = os.Mkdir(dir, os.ModePerm)

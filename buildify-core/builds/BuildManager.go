@@ -2,6 +2,7 @@ package builds
 
 import (
 	"Buildify/util"
+	"errors"
 	"github.com/go-git/go-git/v5"
 	"log"
 	"os"
@@ -10,11 +11,12 @@ import (
 	"time"
 )
 
-func CreateBuild(buildScriptPath, resultPath *string) Build {
+func CreateBuild(buildScriptPath, resultPath *string) (error, *Build) {
 	// create working directory
 	err := createWorkingDir()
 	if err != nil && !os.IsExist(err) {
-		log.Fatal(err)
+		log.Println(err)
+		return err, nil
 	}
 
 	dir := os.Getenv("=D:") + "\\"
@@ -31,28 +33,34 @@ func CreateBuild(buildScriptPath, resultPath *string) Build {
 
 	err, built := buildProject(dir + *buildScriptPath)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err, nil
 	}
 
 	if !built {
-		log.Fatal("Could not build project")
+		return errors.New("could not build project"), nil
 	}
 
 	// get result file
 	err, resultFile := getResultFile(*resultPath, buildId)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err, nil
 	}
 
 	defer resultFile.Close()
 
 	// get git hash
-	gitHash, gitMessage := getGitInfo()
+	err, gitHash, gitMessage := getGitInfo()
+	if err != nil {
+		log.Println(err)
+		return err, nil
+	}
 
 	log.Println("Finished build (#" + strconv.Itoa(buildId) + ")")
 	b := Create(buildId, buildTime, gitHash, gitMessage, resultFile.Name())
 
-	return b
+	return nil, b
 }
 
 func createWorkingDir() error {
@@ -79,7 +87,7 @@ func getResultFile(path string, buildId int) (error, *os.File) {
 	log.Println("Getting the result file")
 	file, err := os.OpenFile(path, 0, os.ModePerm)
 	if err != nil {
-		log.Fatal("Could not find result file: " + path)
+		return errors.New("Could not find result file: " + path), nil
 	}
 
 	defer file.Close()
@@ -102,38 +110,41 @@ func getResultFile(path string, buildId int) (error, *os.File) {
 
 	copiedFile, err := os.Create(buildDir + fileName)
 	if err != nil {
-		log.Fatal("Could not copy result file1")
+		return errors.New("could not copy result file"), nil
 	}
 
 	err = util.FastCopyFile(file, copiedFile)
 	if err != nil {
-		log.Fatal("Could not copy result file")
+		return errors.New("could not copy result file"), nil
 	}
 
 	return err, copiedFile
 }
 
-func getGitInfo() (string, string) {
+func getGitInfo() (error, string, string) {
 	log.Println("Getting information about the latest commit")
 	gitApp, err := git.PlainOpen("work")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err, "", ""
 	}
 
 	head, err := gitApp.Head()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err, "", ""
 	}
 
 	hash := head.Hash()
 
 	commit, err := gitApp.CommitObject(hash)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err, "", ""
 	}
 
 	message := commit.Message
 	message = message[0 : len(message)-1] // remove last '\n'
 
-	return hash.String(), message
+	return nil, hash.String(), message
 }
