@@ -17,7 +17,7 @@ export default {
     },
     timeFormatted(){
         const t = new Date(this.time);
-        return t.getDay() + "." + t.getMonth() + "." + t.getFullYear();
+        return t.getDate() + "." + (t.getMonth() + 1) + "." + t.getFullYear() + " " + t.getHours() + ":" + t.getMinutes();
     }
   }
 }
