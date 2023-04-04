@@ -42,8 +42,15 @@ export default {
 
 <style scoped>
     .build{
+        padding: 0 20px;
+        border-radius: 10px;
         display: flex;
     }
+
+    .build:hover{
+        background-color: rgba(8, 59, 66, 0.3);
+    }
+
     .id{
         background-color: var(--primary-color-dark);
         padding: 5px 15px;
