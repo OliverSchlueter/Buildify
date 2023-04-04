@@ -64,6 +64,8 @@ func Start(port int, admin util.AuthUser) {
 }
 
 func apiBuilds(context *gin.Context) {
+	context.Header("Access-Control-Allow-Origin", context.GetHeader("Origin")) //TODO: I think this is not safe
+	context.Header("Access-Control-Allow-Methods", "GET")
 	context.IndentedJSON(http.StatusOK, getBuildList())
 }
 
