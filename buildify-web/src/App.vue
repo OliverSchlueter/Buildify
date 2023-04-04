@@ -3,8 +3,8 @@ import History from "./components/History.vue";
 
 export default {
     components: {
-      History
-    }
+    History
+}
 }
 </script>
 
