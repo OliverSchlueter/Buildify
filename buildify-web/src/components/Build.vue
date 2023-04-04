@@ -20,6 +20,13 @@ export default {
         const t = new Date(this.time);
         return t.getDate() + "." + (t.getMonth() + 1) + "." + t.getFullYear() + " " + t.getHours() + ":" + t.getMinutes();
     }
+  },
+  methods: {
+    download(){
+        // TODO: actually download the file
+        navigator.clipboard.writeText(this.fullDownloadLink);
+        window.alert("Link to the file has been copied to your clipboard.\n" + this.fullDownloadLink)
+    }
   }
 }
 </script>
@@ -27,7 +34,7 @@ export default {
 <template>
     <div :class="[isLatest ? 'isLatest' : '', 'build']">
         <div class="descriptions">
-            <p class="id"><a :href="baseLink + downloadLink">Build #{{ id }}</a></p>
+            <p class="id" @click="download">Build #{{ id }}</p>
             <div class="description">
                 <p>
                     <span class="hash">{{ shortHash }}</span>
@@ -66,6 +73,7 @@ export default {
         border-radius: 15px;
         margin-right: 10px;
         font-weight: 700;
+        cursor: pointer;
     }
 
     .id a{
