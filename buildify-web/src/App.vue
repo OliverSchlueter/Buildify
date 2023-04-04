@@ -9,10 +9,12 @@ export default {
 </script>
 
 <template>
-  <h1>Buildify builds</h1>
-  <History link="localhost:1337/"/>
+  <h1>Build history</h1>
+  <History max-amount=6 link="localhost:1337"/>
 </template>
 
-<style>
-  
+<style scoped>
+  h1{
+    text-align: center;
+  }
 </style>
