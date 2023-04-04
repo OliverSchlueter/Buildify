@@ -2,7 +2,7 @@
 export default {
   props: [
     "baseLink",
-    "isFirst",
+    "isLatest",
     "id",
     "time",
     "hash",
@@ -25,7 +25,7 @@ export default {
 </script>
 
 <template>
-    <div :class="[isFirst ? 'isFirst' : '', 'build']">
+    <div :class="[isLatest ? 'isLatest' : '', 'build']">
         <div class="descriptions">
             <p class="id"><a :href="baseLink + downloadLink">Build #{{ id }}</a></p>
             <div class="description">
@@ -51,12 +51,12 @@ export default {
     .build:hover{
         background-color: rgba(8, 59, 66, 0.3);
     }
-    
-    .isFirst{
+
+    .isLatest{
         margin-bottom: 20px;
     }
 
-    .isFirst .id{
+    .isLatest .id{
         background-color: rgb(10, 66, 8);
     }    
 

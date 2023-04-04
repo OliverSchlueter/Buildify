@@ -30,7 +30,7 @@ export default {
     <template v-for="build, i in builds">
       <Build v-if="maxAmount > i" 
               :baseLink="link"
-              :is-first="i == 0"
+              :is-latest="i == 0"
               :id="build.Id"
               :time="build.Time" 
               :hash="build.Hash" 
