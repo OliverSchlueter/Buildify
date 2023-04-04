@@ -17,7 +17,7 @@ export default {
     var _this = this;
     fetch("http://" + _this.link + "/builds")
       .then(res => res.json())
-      .then(out => _this.builds = out);
+      .then(out => _this.builds = out.reverse());
   },
   components: {
     Build
