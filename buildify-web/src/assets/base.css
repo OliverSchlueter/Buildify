@@ -6,7 +6,6 @@
 }
 
 body {
-    min-height: 100vh;
     color: var(--text-color);
     background: var(--background-color);
     transition: color 0.5s, background-color 0.5s;
@@ -18,3 +17,10 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+.error {
+  color: rgb(230, 47, 47);
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.3rem;
+}

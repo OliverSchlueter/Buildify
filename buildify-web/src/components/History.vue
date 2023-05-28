@@ -27,15 +27,21 @@ export default {
 
 <template>
   <div class="builds">
-    <template v-for="build, i in builds">
-      <Build v-if="maxAmount > i" 
-              :baseLink="link"
-              :is-latest="i == 0"
-              :id="build.Id"
-              :time="build.Time" 
-              :hash="build.Hash" 
-              :message="build.Message" 
-              :download-link="build.DownloadLink"/>
+    <template v-if="builds.length == 0">
+      <p class="error">Could not load data.</p>
     </template>
+    <template v-else>
+      <template v-for="build, i in builds">
+        <Build v-if="maxAmount > i" 
+                :baseLink="link"
+                :is-latest="i == 0"
+                :id="build.Id"
+                :time="build.Time" 
+                :hash="build.Hash" 
+                :message="build.Message" 
+                :download-link="build.DownloadLink"/>
+      </template>
+    </template>
+
   </div>
 </template>
