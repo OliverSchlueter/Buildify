@@ -3,12 +3,13 @@ package builds
 import (
 	"Buildify/util"
 	"errors"
-	"github.com/go-git/go-git/v5"
 	"log"
 	"os"
 	"os/exec"
 	"strconv"
 	"time"
+
+	"github.com/go-git/go-git/v5"
 )
 
 var IsBuilding bool = false
@@ -26,7 +27,7 @@ func CreateBuild(buildScriptPath, resultPath *string) (error, *Build) {
 	// build project
 	var buildId int
 	if len(Builds) == 0 {
-		buildId = 0
+		buildId = 1
 	} else {
 		buildId = Builds[len(Builds)-1].Id + 1
 	}
