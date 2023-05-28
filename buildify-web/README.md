@@ -21,3 +21,7 @@ npm run dev -- --port 5173
 ```sh
 npm run build
 ```
+
+### Preview
+
+![pewvPreview](preview.png)

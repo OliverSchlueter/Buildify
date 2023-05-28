@@ -54,3 +54,6 @@ cd ../
 
 ``/deleteBuild?id=<number>`` - Deletes a build _(auth required)_
 
+## Example Web UI
+
+There is an example of how to make a UI for the REST API. Read more [here](buildify-web/README.md).
