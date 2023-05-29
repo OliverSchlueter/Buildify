@@ -7,6 +7,7 @@ export default {
     "time",
     "hash",
     "message",
+    "downloads",
     "fileName",
     "downloadLink"
   ],
@@ -60,7 +61,10 @@ export default {
                 </p>
             </div>
             <div class="description right">
-                <span class="time">{{ timeFormatted }}</span>
+                <p>
+                    <span class="downloads">{{ downloads }} downloads</span>
+                    <span class="time">{{ timeFormatted }}</span>
+                </p>
             </div>
         </div>
     </div>
@@ -71,6 +75,10 @@ export default {
         padding: 0 20px;
         border-radius: 10px;
         display: flex;
+        min-width: 600px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .build:hover{
@@ -121,7 +129,8 @@ export default {
         font-family: 'Courier New', Courier, monospace;
     }
 
-    .time{
-        margin-left: auto;
+    .downloads{
+        color: rgb(175, 175, 175);
+        margin-right: 30px;
     }
 </style>

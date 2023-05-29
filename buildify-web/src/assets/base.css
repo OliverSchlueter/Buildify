@@ -24,3 +24,7 @@ body {
   font-weight: bold;
   font-size: 1.3rem;
 }
+
+.center-text {
+  text-align: center;
+}

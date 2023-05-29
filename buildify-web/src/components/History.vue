@@ -19,8 +19,17 @@ export default {
       .then(res => res.json())
       .then(out => _this.builds = out.reverse());
   },
+
   components: {
     Build
+  },
+
+  methods: {
+      totalDownloads: function(){
+        return this.builds
+                .map(build => build.Downloads)
+                .reduce((count, val) => count + val)
+      },
   }
 }
 </script>
@@ -31,6 +40,7 @@ export default {
       <p class="error">Could not load data.</p>
     </template>
     <template v-else>
+      <p class="center-text">Total downloads: {{ totalDownloads() }}</p>
       <template v-for="build, i in builds">
         <Build v-if="maxAmount > i" 
                 :baseLink="link"
@@ -39,6 +49,7 @@ export default {
                 :time="build.Time" 
                 :hash="build.Hash" 
                 :message="build.Message"
+                :downloads="build.Downloads"
                 :file-name="build.FileName"
                 :download-link="build.DownloadLink"/>
       </template>
