@@ -7,6 +7,7 @@ export default {
     "time",
     "hash",
     "message",
+    "fileName",
     "downloadLink"
   ],
   computed: {
@@ -23,9 +24,26 @@ export default {
   },
   methods: {
     download(){
-        // TODO: actually download the file
-        navigator.clipboard.writeText(this.fullDownloadLink);
-        window.alert("Link to the file has been copied to your clipboard.\n" + this.fullDownloadLink)
+        console.log("Download link: " + this.fullDownloadLink)
+        fetch("http://" + this.fullDownloadLink)
+        .then(response => response.blob())
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = this.fileName;
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+    
+            navigator.clipboard.writeText(this.fullDownloadLink);
+            window.alert("Link to the file has been copied to your clipboard.\n" + this.fullDownloadLink)
+        });
     }
   }
 }

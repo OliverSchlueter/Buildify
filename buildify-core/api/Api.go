@@ -3,11 +3,12 @@ package api
 import (
 	"Buildify/builds"
 	"Buildify/util"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type BuildApi struct {
@@ -15,6 +16,7 @@ type BuildApi struct {
 	Time         int64
 	Hash         string
 	Message      string
+	FileName     string
 	DownloadLink string
 }
 
@@ -24,6 +26,7 @@ func toApiStruct(build builds.Build) BuildApi {
 		Time:         build.Time,
 		Hash:         build.Hash,
 		Message:      build.Message,
+		FileName:     util.GetResultFileName(),
 		DownloadLink: "/download?id=" + strconv.Itoa(build.Id),
 	}
 }
@@ -116,6 +119,9 @@ func apiStartBuild(context *gin.Context) {
 }
 
 func apiDownload(context *gin.Context) {
+	context.Header("Access-Control-Allow-Origin", context.GetHeader("Origin")) //TODO: I think this is not safe
+	context.Header("Access-Control-Allow-Methods", "GET")
+	
 	idStr := context.Request.URL.Query().Get("id")
 	if idStr == "" {
 		context.IndentedJSON(http.StatusNotFound, "Please provide a build id")

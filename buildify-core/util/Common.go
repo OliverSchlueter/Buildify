@@ -3,12 +3,17 @@ package util
 import (
 	"io"
 	"os"
+	"path"
 )
 
 var (
 	BuildScriptPath *string
 	ResultPath      *string
 )
+
+func GetResultFileName() string {
+	return path.Base(*ResultPath)
+}
 
 func FastCopyFile(source, destination *os.File) error {
 	buf := make([]byte, 4096)

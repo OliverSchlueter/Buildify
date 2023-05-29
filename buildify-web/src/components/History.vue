@@ -38,7 +38,8 @@ export default {
                 :id="build.Id"
                 :time="build.Time" 
                 :hash="build.Hash" 
-                :message="build.Message" 
+                :message="build.Message"
+                :file-name="build.FileName"
                 :download-link="build.DownloadLink"/>
       </template>
     </template>
