@@ -6,10 +6,12 @@ import (
 	"Buildify/util"
 	"encoding/json"
 	"flag"
-	"github.com/Microsoft/go-winio/pkg/guid"
 	"log"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/Microsoft/go-winio/pkg/guid"
 )
 
 func main() {
@@ -24,6 +26,15 @@ func main() {
 	}
 
 	admin := getAdminUser()
+
+	// auto save
+	go func() {
+		for {
+			log.Println("Saving builds.json")
+			builds.SaveBuildsFile("builds/")
+			time.Sleep(time.Minute * 5)
+		}
+	}()
 
 	api.Start(*port, admin)
 }

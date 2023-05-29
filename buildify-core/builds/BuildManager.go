@@ -61,7 +61,7 @@ func CreateBuild(buildScriptPath, resultPath *string) (error, *Build) {
 	}
 
 	log.Println("Finished build (#" + strconv.Itoa(buildId) + ")")
-	b := Create(buildId, buildTime, gitHash, gitMessage, resultFile.Name())
+	b := Create(buildId, buildTime, gitHash, gitMessage, 0, resultFile.Name())
 
 	return nil, b
 }

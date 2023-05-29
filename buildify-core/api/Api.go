@@ -16,6 +16,7 @@ type BuildApi struct {
 	Time         int64
 	Hash         string
 	Message      string
+	Downloads    int
 	FileName     string
 	DownloadLink string
 }
@@ -26,6 +27,7 @@ func toApiStruct(build builds.Build) BuildApi {
 		Time:         build.Time,
 		Hash:         build.Hash,
 		Message:      build.Message,
+		Downloads:    build.Downloads,
 		FileName:     util.GetResultFileName(),
 		DownloadLink: "/download?id=" + strconv.Itoa(build.Id),
 	}
@@ -121,7 +123,7 @@ func apiStartBuild(context *gin.Context) {
 func apiDownload(context *gin.Context) {
 	context.Header("Access-Control-Allow-Origin", context.GetHeader("Origin")) //TODO: I think this is not safe
 	context.Header("Access-Control-Allow-Methods", "GET")
-	
+
 	idStr := context.Request.URL.Query().Get("id")
 	if idStr == "" {
 		context.IndentedJSON(http.StatusNotFound, "Please provide a build id")
@@ -134,7 +136,7 @@ func apiDownload(context *gin.Context) {
 		return
 	}
 
-	for _, build := range builds.Builds {
+	for i, build := range builds.Builds {
 		if build.Id == id {
 			file, err := os.Open(build.ResultFilePath)
 			if err != nil {
@@ -147,6 +149,7 @@ func apiDownload(context *gin.Context) {
 			}
 
 			context.FileAttachment(build.ResultFilePath, stat.Name())
+			builds.Builds[i].Downloads += 1
 			return
 		}
 	}
