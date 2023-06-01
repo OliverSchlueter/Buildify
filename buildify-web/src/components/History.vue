@@ -27,8 +27,8 @@ export default {
   methods: {
       totalDownloads: function(){
         return this.builds
-                .map(build => build.Downloads)
-                .reduce((count, val) => count + val)
+                .map(build => build['Downloads'])
+                .reduce((count, val) => count + val, 0)
       },
   }
 }
@@ -45,13 +45,13 @@ export default {
         <Build v-if="maxAmount > i" 
                 :baseLink="link"
                 :is-latest="i == 0"
-                :id="build.Id"
-                :time="build.Time" 
-                :hash="build.Hash" 
-                :message="build.Message"
-                :downloads="build.Downloads"
-                :file-name="build.FileName"
-                :download-link="build.DownloadLink"/>
+                :id="build['Id']"
+                :time="build['Time']" 
+                :hash="build['Hash']" 
+                :message="build['Message']"
+                :downloads="build['Downloads']"
+                :file-name="build['FileName']"
+                :download-link="build['DownloadLink']"/>
       </template>
     </template>
 

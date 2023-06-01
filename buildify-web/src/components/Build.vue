@@ -25,7 +25,6 @@ export default {
   },
   methods: {
     download(){
-        console.log("Download link: " + this.fullDownloadLink)
         fetch("http://" + this.fullDownloadLink)
         .then(response => response.blob())
         .then(blob => {

@@ -8,18 +8,21 @@ You can copy this and modify for your needs.
 
 ```sh
 npm install
+npm install -g serve
 ```
 
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev -- --port 5173
+npm run dev
 ```
 
 ### Type-Check, Compile and Minify for Production
 
 ```sh
 npm run build
+cd dist
+serve -l [PORT]
 ```
 
 ### Preview
