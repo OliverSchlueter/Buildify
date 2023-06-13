@@ -1,11 +1,13 @@
 package builds
 
 import (
+	"Buildify/config"
 	"Buildify/util"
 	"errors"
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -14,7 +16,12 @@ import (
 
 var IsBuilding bool = false
 
-func CreateBuild(buildScriptPath, resultPath *string) (error, *Build) {
+func CreateBuild() (error, *Build) {
+	log.Println("------------------------------------------------------")
+	log.Println("")
+	log.Println("Creating new build")
+	log.Println("")
+
 	// create working directory
 	err := createWorkingDir()
 	if err != nil && !os.IsExist(err) {
@@ -34,7 +41,7 @@ func CreateBuild(buildScriptPath, resultPath *string) (error, *Build) {
 
 	buildTime := time.Now().UnixMilli()
 
-	err, built := buildProject(dir + *buildScriptPath)
+	err, built := buildProject(dir + config.CurrentConfig.BuildScriptPath)
 	if err != nil {
 		log.Println(err)
 		return err, nil
@@ -44,14 +51,14 @@ func CreateBuild(buildScriptPath, resultPath *string) (error, *Build) {
 		return errors.New("could not build project"), nil
 	}
 
-	// get result file
-	err, resultFile := getResultFile(*resultPath, buildId)
+	// get artifact file
+	artifactFile, err := getArtifactFile(config.CurrentConfig.ArtifactPath, buildId)
 	if err != nil {
 		log.Println(err)
 		return err, nil
 	}
 
-	defer resultFile.Close()
+	defer artifactFile.Close()
 
 	// get git hash
 	err, gitHash, gitMessage := getGitInfo()
@@ -60,9 +67,12 @@ func CreateBuild(buildScriptPath, resultPath *string) (error, *Build) {
 		return err, nil
 	}
 
-	log.Println("Finished build (#" + strconv.Itoa(buildId) + ")")
-	b := Create(buildId, buildTime, gitHash, gitMessage, 0, resultFile.Name())
+	b := Create(buildId, buildTime, gitHash, gitMessage, 0, artifactFile.Name())
 
+	log.Println("")
+	log.Println("Finished build (#" + strconv.Itoa(buildId) + ")")
+	log.Println("")
+	log.Println("------------------------------------------------------")
 	return nil, b
 }
 
@@ -86,11 +96,21 @@ func buildProject(buildScript string) (error, bool) {
 	return nil, success
 }
 
-func getResultFile(path string, buildId int) (error, *os.File) {
-	log.Println("Getting the result file")
-	file, err := os.OpenFile(path, 0, os.ModePerm)
+func getArtifactFile(path string, buildId int) (*os.File, error) {
+	log.Println("Getting the artifact file")
+
+	matches, err := filepath.Glob(path)
 	if err != nil {
-		return errors.New("Could not find result file: " + path), nil
+		return nil, errors.New("could not find artifact file")
+	}
+
+	if len(matches) == 0 {
+		return nil, errors.New("could not find artifact file")
+	}
+
+	file, err := os.OpenFile(matches[0], 0, os.ModePerm)
+	if err != nil {
+		return nil, errors.New("could not find artifact file")
 	}
 
 	defer file.Close()
@@ -102,26 +122,26 @@ func getResultFile(path string, buildId int) (error, *os.File) {
 	buildDir := "builds/"
 	err = os.Mkdir(buildDir, os.ModePerm)
 	if err != nil && !os.IsExist(err) {
-		return err, nil
+		return nil, err
 	}
 
 	buildDir = buildDir + "build-" + strconv.Itoa(buildId) + "/"
 	err = os.Mkdir(buildDir, os.ModePerm)
 	if err != nil && !os.IsExist(err) {
-		return err, nil
+		return nil, err
 	}
 
 	copiedFile, err := os.Create(buildDir + fileName)
 	if err != nil {
-		return errors.New("could not copy result file"), nil
+		return nil, errors.New("could not copy artifact file")
 	}
 
 	err = util.FastCopyFile(file, copiedFile)
 	if err != nil {
-		return errors.New("could not copy result file"), nil
+		return nil, errors.New("could not copy artifact file")
 	}
 
-	return err, copiedFile
+	return copiedFile, err
 }
 
 func getGitInfo() (error, string, string) {

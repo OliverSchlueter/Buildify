@@ -28,7 +28,7 @@ func toApiStruct(build builds.Build) BuildApi {
 		Hash:         build.Hash,
 		Message:      build.Message,
 		Downloads:    build.Downloads,
-		FileName:     util.GetResultFileName(),
+		FileName:     util.GetArtifactFileName(build.ArtifactFilePath),
 		DownloadLink: "/download?id=" + strconv.Itoa(build.Id),
 	}
 }
@@ -109,7 +109,7 @@ func apiStartBuild(context *gin.Context) {
 	}
 
 	builds.IsBuilding = true
-	err, build := builds.CreateBuild(util.BuildScriptPath, util.ResultPath)
+	err, build := builds.CreateBuild()
 	builds.IsBuilding = false
 
 	if err != nil {
@@ -138,7 +138,7 @@ func apiDownload(context *gin.Context) {
 
 	for i, build := range builds.Builds {
 		if build.Id == id {
-			file, err := os.Open(build.ResultFilePath)
+			file, err := os.Open(build.ArtifactFilePath)
 			if err != nil {
 				return
 			}
@@ -148,7 +148,7 @@ func apiDownload(context *gin.Context) {
 				return
 			}
 
-			context.FileAttachment(build.ResultFilePath, stat.Name())
+			context.FileAttachment(build.ArtifactFilePath, stat.Name())
 			builds.Builds[i].Downloads += 1
 			return
 		}

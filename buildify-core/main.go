@@ -3,11 +3,12 @@ package main
 import (
 	"Buildify/api"
 	"Buildify/builds"
+	"Buildify/config"
 	"Buildify/util"
 	"encoding/json"
-	"flag"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -15,28 +16,46 @@ import (
 )
 
 func main() {
-	util.BuildScriptPath = flag.String("build-script", "build.bat", "path to the build script")
-	util.ResultPath = flag.String("result", "work/build/libs/StackPP.jar", "path to the result executable file")
-	port := flag.Int("port", 1337, "port for the REST API")
-	flag.Parse()
+	// loading config
+	err := config.LoadConfig()
+	if err != nil {
+		log.Println("Could not load config.json")
+		log.Fatal(err)
+		return
+	}
 
-	err := builds.LoadBuildsFile("builds/")
+	log.Println("Loaded config.json")
+	log.Println("- Port: " + strconv.Itoa(config.CurrentConfig.Port))
+	log.Println("- Build script path: " + config.CurrentConfig.BuildScriptPath)
+	log.Println("- Artifact path: " + config.CurrentConfig.ArtifactPath)
+	log.Println("")
+
+	// loading admin user
+	admin := getAdminUser()
+	log.Println("Loaded admin user")
+
+	// loading builds
+	err = builds.LoadBuildsFile("builds/")
 	if err != nil {
 		log.Println("Could not load build metadata file")
 	}
 
-	admin := getAdminUser()
+	log.Println("Loaded build metadata")
 
-	// auto save
+	// starting auto save
 	go func() {
+		time.Sleep(time.Minute * 2)
+
 		for {
-			log.Println("Saving builds.json")
+			log.Println("Auto saving build metadata")
 			builds.SaveBuildsFile("builds/")
 			time.Sleep(time.Minute * 5)
 		}
 	}()
 
-	api.Start(*port, admin)
+	log.Println("Starting web server...")
+	log.Println("---------------------------------------------")
+	api.Start(config.CurrentConfig.Port, admin)
 }
 
 func getAdminUser() util.AuthUser {

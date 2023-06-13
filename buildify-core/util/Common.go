@@ -6,15 +6,6 @@ import (
 	"path"
 )
 
-var (
-	BuildScriptPath *string
-	ResultPath      *string
-)
-
-func GetResultFileName() string {
-	return path.Base(*ResultPath)
-}
-
 func FastCopyFile(source, destination *os.File) error {
 	buf := make([]byte, 4096)
 	for {
@@ -32,4 +23,17 @@ func FastCopyFile(source, destination *os.File) error {
 	}
 
 	return nil
+}
+
+func FileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+
+	return !info.IsDir()
+}
+
+func GetArtifactFileName(filePath string) string {
+	return path.Base(filePath)
 }

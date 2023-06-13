@@ -10,22 +10,22 @@ import (
 var Builds []Build
 
 type Build struct {
-	Id             int
-	Time           int64
-	Hash           string
-	Message        string
-	Downloads      int
-	ResultFilePath string
+	Id               int
+	Time             int64
+	Hash             string
+	Message          string
+	Downloads        int
+	ArtifactFilePath string
 }
 
-func Create(id int, time int64, hash string, message string, downloads int, resultFilePath string) *Build {
+func Create(id int, time int64, hash string, message string, downloads int, artifactFilePath string) *Build {
 	b := Build{
-		Id:             id,
-		Time:           time,
-		Hash:           hash,
-		Message:        message,
-		Downloads:      downloads,
-		ResultFilePath: resultFilePath,
+		Id:               id,
+		Time:             time,
+		Hash:             hash,
+		Message:          message,
+		Downloads:        downloads,
+		ArtifactFilePath: artifactFilePath,
 	}
 
 	Builds = append(Builds, b)
