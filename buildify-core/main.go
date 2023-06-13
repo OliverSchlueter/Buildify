@@ -5,6 +5,7 @@ import (
 	"Buildify/builds"
 	"Buildify/config"
 	"Buildify/util"
+	"bufio"
 	"encoding/json"
 	"log"
 	"os"
@@ -53,9 +54,29 @@ func main() {
 		}
 	}()
 
-	log.Println("Starting web server...")
-	log.Println("---------------------------------------------")
-	api.Start(config.CurrentConfig.Port, admin)
+	// print memory usage
+	go func() {
+		time.Sleep(time.Second * 5)
+		for {
+			util.PrintMemUsage()
+			time.Sleep(time.Second * 30)
+		}
+	}()
+
+	log.Println("Starting http server...")
+	go api.Start(config.CurrentConfig.Port, admin)
+	log.Println("Started http server")
+
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan(){
+		input := scanner.Text()
+
+		if input == "" {
+			continue
+		}
+
+		log.Println("Input: '" + input + "'")
+	}
 }
 
 func getAdminUser() util.AuthUser {
