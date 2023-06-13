@@ -7,6 +7,7 @@ import (
 	"Buildify/util"
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -65,10 +66,11 @@ func main() {
 		}
 	}()
 
-	log.Println("Starting http server...")
+	// start http server
 	go api.Start(config.CurrentConfig.Port, admin)
 	log.Println("Started http server")
 
+	// start waiting for cli commands
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		input := scanner.Text()
@@ -77,7 +79,33 @@ func main() {
 			continue
 		}
 
-		log.Println("Input: '" + input + "'")
+		input = strings.ToLower(input)
+		parts := strings.Split(input, " ")
+		cmd := parts[0]
+		// args := parts[1:]
+
+		switch cmd {
+		case "help":
+			log.Println("--------------------------------------")
+			log.Println("help - shows this menu")
+			log.Println("status - shows the server status")
+			log.Println("stop - stops the application")
+			log.Println("clear|cls - clears the terminal")
+			log.Println("--------------------------------------")
+		case "stop":
+			log.Println("Stopping Buildify")
+			builds.SaveBuildsFile("builds/")
+			os.Exit(0)
+		case "status":
+			log.Println("--------------------------------------")
+			log.Println("Status: " + util.ColorGreen + "Running" + util.ColorReset)
+			util.PrintUptime()
+			util.PrintMemUsage()
+			log.Println("--------------------------------------")
+		case "clear":
+		case "cls":
+			fmt.Println("\033[2J")
+		}
 	}
 }
 

@@ -87,6 +87,11 @@ func PrintMemUsage() {
 	)
 }
 
+func PrintUptime() {
+	uptime := GetUptime()
+	log.Printf("Uptime: %v", FormatDuration(uptime))
+}
+
 func FormatMemory(bytes uint64) string {
 	const (
 		kB = 1024
@@ -101,4 +106,33 @@ func FormatMemory(bytes uint64) string {
 	default:
 		return fmt.Sprintf("%d bytes", bytes)
 	}
+}
+
+func FormatDuration(milliseconds int64) string {
+	duration := time.Duration(milliseconds) * time.Millisecond
+
+	days := int(duration / (24 * time.Hour))
+	duration = duration % (24 * time.Hour)
+
+	hours := int(duration / time.Hour)
+	duration = duration % time.Hour
+
+	minutes := int(duration / time.Minute)
+	duration = duration % time.Minute
+
+	seconds := int(duration / time.Second)
+
+	result := ""
+	if days > 0 {
+		result += fmt.Sprintf("%dd ", days)
+	}
+	if hours > 0 {
+		result += fmt.Sprintf("%dh ", hours)
+	}
+	if minutes > 0 {
+		result += fmt.Sprintf("%dmin ", minutes)
+	}
+	result += fmt.Sprintf("%ds", seconds)
+
+	return result
 }
