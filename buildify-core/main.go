@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -15,13 +16,34 @@ import (
 	"time"
 
 	"github.com/Microsoft/go-winio/pkg/guid"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	util.SetStartupTime(time.Now().UnixMilli())
 
+	// setting up logger
+	err := os.Mkdir("logs/", os.ModePerm)
+	if err != nil && !os.IsExist(err) {
+		log.Fatal(err)
+	}
+
+	logFile, err := os.OpenFile("logs/"+time.Now().Format(time.DateOnly)+".txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logFile.Close()
+
+	logWriter := io.MultiWriter(os.Stdout, logFile)
+	gin.DefaultWriter = logWriter
+	log.SetOutput(logWriter)
+
+	log.Println("-----------------------")
+	log.Println("Starting Building...")
+	log.Println("-----------------------")
+
 	// loading config
-	err := config.LoadConfig()
+	err = config.LoadConfig()
 	if err != nil {
 		log.Println("Could not load config.json")
 		log.Fatal(err)
