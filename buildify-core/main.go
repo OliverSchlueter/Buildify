@@ -17,6 +17,8 @@ import (
 )
 
 func main() {
+	util.SetStartupTime(time.Now().UnixMilli())
+
 	// loading config
 	err := config.LoadConfig()
 	if err != nil {
@@ -68,7 +70,7 @@ func main() {
 	log.Println("Started http server")
 
 	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan(){
+	for scanner.Scan() {
 		input := scanner.Text()
 
 		if input == "" {

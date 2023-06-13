@@ -46,6 +46,7 @@ func Start(port int, admin util.AuthUser) {
 	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.Default()
+	router.GET("/server-stats", apiServerStats)
 	router.GET("/builds", apiBuilds)
 	router.GET("/build", apiBuild)
 	router.GET("/download", apiDownload)
@@ -66,6 +67,16 @@ func Start(port int, admin util.AuthUser) {
 	if err != nil {
 		log.Fatal("Could not start REST API")
 	}
+}
+
+func apiServerStats(context *gin.Context) {
+	mem := util.GetMemoryStats()
+
+	context.IndentedJSON(http.StatusOK, map[string]string{
+		"uptime": strconv.FormatInt(util.GetUptime(), 10),
+		"memory": strconv.FormatUint(mem.Alloc, 10),
+		"num-gc": strconv.FormatUint(uint64(mem.NumGC), 10),
+	})
 }
 
 func apiBuilds(context *gin.Context) {

@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"time"
 )
 
 const (
@@ -21,6 +22,20 @@ const (
 	ColorGreenBg  = "\033[42m"
 	ColorYellowBg = "\033[43m"
 )
+
+var (
+	startupTime int64 = 0
+)
+
+func SetStartupTime(t int64) {
+	if startupTime == 0 {
+		startupTime = t
+	}
+}
+
+func GetUptime() int64 {
+	return time.Now().UnixMilli() - startupTime
+}
 
 func FastCopyFile(source, destination *os.File) error {
 	buf := make([]byte, 4096)
@@ -54,16 +69,21 @@ func GetArtifactFileName(filePath string) string {
 	return path.Base(filePath)
 }
 
+func GetMemoryStats() runtime.MemStats {
+	var mem runtime.MemStats
+	runtime.ReadMemStats(&mem)
+	return mem
+}
+
 func PrintMemUsage() {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
+	mem := GetMemoryStats()
 
 	log.Printf(
 		"Memory usage: Alloc=%v | TotalAlloc=%v | Sys=%v | NumGC=%v",
-		FormatMemory(m.Alloc),
-		FormatMemory(m.TotalAlloc),
-		FormatMemory(m.Sys),
-		m.NumGC,
+		FormatMemory(mem.Alloc),
+		FormatMemory(mem.TotalAlloc),
+		FormatMemory(mem.Sys),
+		mem.NumGC,
 	)
 }
 
