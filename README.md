@@ -8,30 +8,22 @@ Easy build and deploy system
 
 1. clone the repo ``git clone https://github.com/OliverSchlueter/Buildify.git``
 2. run ``make.bat``
-3. executable will be at: ``buildify-core/bin/buildify.exe``
-
-### Other
-
-1. figure out yourself, it is a Go project
+3. executable will be located at: ``buildify-core/bin/buildify.exe``
 
 ## How to use
 
-### Commandline arguments
-
-``-build-script=<PATH>`` - This script will run everytime a new build is triggered
-
-``-result=<PATH>`` - This is where the downloadable built executable is
-
-``-port=<NUMBER>`` - The API will start on this port
-
-<br>
-
 **Example: java gradle project**
 
-How to start buildify:
-``$ buildify.exe -build-script=build.bat -result=work/build/libs/myJar.jar -port=1337``
+config.json
+```json
+{
+    "Port": 1337,
+    "BuildScriptPath": "build.bat",
+    "ArtifactPath": "work/build/libs/MyJar.jar"
+}
+```
 
-**build.bat**
+build.bat
 ````batch
 cd work
 
@@ -42,9 +34,11 @@ gradlew shadowJar
 cd ../
 ````
 
+How to start Buildify: ``$ buildify.exe``
+
 ### The REST API
 
-```/builds``` - Shows a list of all builds
+``/builds`` - Shows a list of all builds
 
 ``/build?id=<number|latest>`` - Shows details about a build
 
@@ -53,6 +47,8 @@ cd ../
 ``/startBuild`` - Starts the process of creating a new build _(auth required)_
 
 ``/deleteBuild?id=<number>`` - Deletes a build _(auth required)_
+
+``/server-stats`` - Shows some statistics about the running server
 
 ## Example Web UI
 
