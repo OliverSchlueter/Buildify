@@ -117,7 +117,7 @@ func main() {
 		case "stop":
 			log.Println("Stopping Buildify")
 			builds.SaveBuildsFile("builds/")
-			os.Exit(0)
+			return
 		case "status":
 			log.Println("--------------------------------------")
 			log.Println("Status: " + util.ColorGreen + "Running" + util.ColorReset)

@@ -63,7 +63,7 @@ func Start(port int, admin util.AuthUser) {
 
 	deleteBuild.GET("/", apiDeleteBuild)
 
-	err := router.Run("localhost:" + strconv.Itoa(port))
+	err := router.Run("0.0.0.0:" + strconv.Itoa(port))
 	if err != nil {
 		log.Fatal("Could not start REST API")
 	}

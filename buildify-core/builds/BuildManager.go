@@ -29,8 +29,6 @@ func CreateBuild() (error, *Build) {
 		return err, nil
 	}
 
-	dir := os.Getenv("=D:") + "\\"
-
 	// build project
 	var buildId int
 	if len(Builds) == 0 {
@@ -41,7 +39,7 @@ func CreateBuild() (error, *Build) {
 
 	buildTime := time.Now().UnixMilli()
 
-	err, built := buildProject(dir + config.CurrentConfig.BuildScriptPath)
+	err, built := buildProject(config.CurrentConfig.BuildScriptPath)
 	if err != nil {
 		log.Println(err)
 		return err, nil
