@@ -29,7 +29,7 @@ func toApiStruct(build builds.Build) BuildApi {
 		Message:      build.Message,
 		Downloads:    build.Downloads,
 		FileName:     util.GetArtifactFileName(build.ArtifactFilePath),
-		DownloadLink: "/download?id=" + strconv.Itoa(build.Id),
+		DownloadLink: "/download/" + strconv.Itoa(build.Id),
 	}
 }
 
@@ -48,8 +48,8 @@ func Start(port int, admin util.AuthUser) {
 	router := gin.Default()
 	router.GET("/server-stats", apiServerStats)
 	router.GET("/builds", apiBuilds)
-	router.GET("/build", apiBuild)
-	router.GET("/download", apiDownload)
+	router.GET("/build/:id", apiBuild)
+	router.GET("/download/:id", apiDownload)
 
 	startDownload := router.Group("/startBuild", gin.BasicAuth(map[string]string{
 		admin.Username: admin.Password,
@@ -57,7 +57,7 @@ func Start(port int, admin util.AuthUser) {
 
 	startDownload.GET("/", apiStartBuild)
 
-	deleteBuild := router.Group("/deleteBuild", gin.BasicAuth(map[string]string{
+	deleteBuild := router.Group("/deleteBuild/:id", gin.BasicAuth(map[string]string{
 		admin.Username: admin.Password,
 	}))
 
@@ -86,11 +86,7 @@ func apiBuilds(context *gin.Context) {
 }
 
 func apiBuild(context *gin.Context) {
-	idStr := context.Request.URL.Query().Get("id")
-	if idStr == "" {
-		context.IndentedJSON(http.StatusNotFound, "Please provide a build id")
-		return
-	}
+	idStr := context.Param("id")
 
 	if idStr == "latest" {
 		context.IndentedJSON(http.StatusOK, toApiStruct(builds.Builds[len(builds.Builds)-1]))
@@ -135,11 +131,7 @@ func apiDownload(context *gin.Context) {
 	context.Header("Access-Control-Allow-Origin", context.GetHeader("Origin")) //TODO: I think this is not safe
 	context.Header("Access-Control-Allow-Methods", "GET")
 
-	idStr := context.Request.URL.Query().Get("id")
-	if idStr == "" {
-		context.IndentedJSON(http.StatusNotFound, "Please provide a build id")
-		return
-	}
+	idStr := context.Param("id")
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -169,11 +161,7 @@ func apiDownload(context *gin.Context) {
 }
 
 func apiDeleteBuild(context *gin.Context) {
-	idStr := context.Request.URL.Query().Get("id")
-	if idStr == "" {
-		context.IndentedJSON(http.StatusNotFound, "Please provide a build id")
-		return
-	}
+	idStr := context.Param("id")
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
