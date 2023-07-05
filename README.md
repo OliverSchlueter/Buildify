@@ -45,17 +45,17 @@ How to start Buildify: ``$ buildify.exe``
 
 ### The REST API
 
-``/builds`` - Shows a list of all builds
+``/api/builds`` - Shows a list of all builds
 
-``/build/<id|latest>`` - Shows details about a build
+``/api/build/<id|latest>`` - Shows details about a build
 
-``/download/<id>`` - Downloads the output file of a build
+``/api/download/<id>`` - Downloads the output file of a build
 
-``/startBuild`` - Starts the process of creating a new build _(auth required)_
+``/api/startBuild`` - Starts the process of creating a new build _(auth required)_
 
-``/deleteBuild/<id>`` - Deletes a build _(auth required)_
+``/api/deleteBuild/<id>`` - Deletes a build _(auth required)_
 
-``/server-stats`` - Shows some statistics about the running server
+``/api/server-stats`` - Shows some statistics about the running server
 
 ## Example Web UI
 

@@ -46,18 +46,18 @@ func Start(port int, admin util.AuthUser) {
 	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.Default()
-	router.GET("/server-stats", apiServerStats)
-	router.GET("/builds", apiBuilds)
-	router.GET("/build/:id", apiBuild)
-	router.GET("/download/:id", apiDownload)
+	router.GET("/api/server-stats", apiServerStats)
+	router.GET("/api/builds", apiBuilds)
+	router.GET("/api/build/:id", apiBuild)
+	router.GET("/api/download/:id", apiDownload)
 
-	startDownload := router.Group("/startBuild", gin.BasicAuth(map[string]string{
+	startDownload := router.Group("/api/startBuild", gin.BasicAuth(map[string]string{
 		admin.Username: admin.Password,
 	}))
 
 	startDownload.GET("/", apiStartBuild)
 
-	deleteBuild := router.Group("/deleteBuild/:id", gin.BasicAuth(map[string]string{
+	deleteBuild := router.Group("/api/deleteBuild/:id", gin.BasicAuth(map[string]string{
 		admin.Username: admin.Password,
 	}))
 
