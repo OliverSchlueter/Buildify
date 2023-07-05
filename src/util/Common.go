@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"runtime"
 	"time"
 )
 
@@ -22,20 +21,6 @@ const (
 	ColorGreenBg  = "\033[42m"
 	ColorYellowBg = "\033[43m"
 )
-
-var (
-	startupTime int64 = 0
-)
-
-func SetStartupTime(t int64) {
-	if startupTime == 0 {
-		startupTime = t
-	}
-}
-
-func GetUptime() int64 {
-	return time.Now().UnixMilli() - startupTime
-}
 
 func FastCopyFile(source, destination *os.File) error {
 	buf := make([]byte, 4096)
@@ -69,12 +54,6 @@ func GetArtifactFileName(filePath string) string {
 	return path.Base(filePath)
 }
 
-func GetMemoryStats() runtime.MemStats {
-	var mem runtime.MemStats
-	runtime.ReadMemStats(&mem)
-	return mem
-}
-
 func PrintMemUsage() {
 	mem := GetMemoryStats()
 
@@ -90,6 +69,11 @@ func PrintMemUsage() {
 func PrintUptime() {
 	uptime := GetUptime()
 	log.Printf("Uptime: %v", FormatDuration(uptime))
+}
+
+func PrintAmountRequests() {
+	amount := GetAmountRequests()
+	log.Printf("Amount Requests: %d", amount)
 }
 
 func FormatMemory(bytes uint64) string {

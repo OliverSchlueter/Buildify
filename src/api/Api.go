@@ -47,6 +47,7 @@ func Start(port int, admin util.AuthUser) {
 
 	router := gin.Default()
 	router.LoadHTMLGlob("static/*")
+	router.Use(middleware)
 	router.GET("/", webRoot)
 	router.GET("/api/server-stats", apiServerStats)
 	router.GET("/api/builds", apiBuilds)
@@ -71,6 +72,10 @@ func Start(port int, admin util.AuthUser) {
 	}
 }
 
+func middleware(context *gin.Context) {
+	util.IncreamentAmountRequests()
+}
+
 func webRoot(context *gin.Context) {
 	context.HTML(200, "index.html", gin.H{
 		"builds": builds.Builds,
@@ -84,6 +89,7 @@ func apiServerStats(context *gin.Context) {
 		"uptime": strconv.FormatInt(util.GetUptime(), 10),
 		"memory": strconv.FormatUint(mem.Alloc, 10),
 		"num-gc": strconv.FormatUint(uint64(mem.NumGC), 10),
+		"num-requests": strconv.FormatUint(uint64(util.GetAmountRequests()), 10),
 	})
 }
 

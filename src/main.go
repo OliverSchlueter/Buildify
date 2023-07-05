@@ -123,6 +123,7 @@ func main() {
 			log.Println("Status: " + util.ColorGreen + "Running" + util.ColorReset)
 			util.PrintUptime()
 			util.PrintMemUsage()
+			util.PrintAmountRequests()
 			log.Println("--------------------------------------")
 		case "clear":
 		case "cls":
