@@ -46,6 +46,8 @@ func Start(port int, admin util.AuthUser) {
 	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.Default()
+	router.LoadHTMLGlob("static/*")
+	router.GET("/", webRoot)
 	router.GET("/api/server-stats", apiServerStats)
 	router.GET("/api/builds", apiBuilds)
 	router.GET("/api/build/:id", apiBuild)
@@ -67,6 +69,12 @@ func Start(port int, admin util.AuthUser) {
 	if err != nil {
 		log.Fatal("Could not start REST API")
 	}
+}
+
+func webRoot(context *gin.Context) {
+	context.HTML(200, "index.html", gin.H{
+		"builds": builds.Builds,
+	})
 }
 
 func apiServerStats(context *gin.Context) {
