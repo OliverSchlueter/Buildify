@@ -39,7 +39,8 @@ func CreateBuild() (error, *Build) {
 
 	buildTime := time.Now().UnixMilli()
 
-	err, built := buildProject(config.CurrentConfig.BuildScriptPath)
+	dir := os.Getenv("=D:") + "\\"
+	err, built := buildProject(dir + config.CurrentConfig.BuildScriptPath)
 	if err != nil {
 		log.Println(err)
 		return err, nil
@@ -83,7 +84,7 @@ func createWorkingDir() error {
 func buildProject(buildScript string) (error, bool) {
 	log.Println("Building the project (" + buildScript + ")")
 	command := exec.Command(buildScript)
-	//command.Stdout = os.Stdout
+	// command.Stdout = os.Stdout
 
 	err := command.Run()
 	if err != nil {
