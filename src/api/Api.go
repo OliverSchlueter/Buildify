@@ -12,13 +12,14 @@ import (
 )
 
 type BuildApi struct {
-	Id           int
-	Time         int64
-	Hash         string
-	Message      string
-	Downloads    int
-	FileName     string
-	DownloadLink string
+	Id           int    // see Build.go
+	Time         int64  // see Build.go
+	Hash         string // see Build.go
+	Message      string // see Build.go
+	Downloads    int    // see Build.go
+	FileName     string // see Build.go
+	DownloadLink string // see Build.go
+	BuildingTime int    // see Build.go
 }
 
 func toApiStruct(build builds.Build) BuildApi {
@@ -28,6 +29,7 @@ func toApiStruct(build builds.Build) BuildApi {
 		Hash:         build.Hash,
 		Message:      build.Message,
 		Downloads:    build.Downloads,
+		BuildingTime: build.BuildingTime,
 		FileName:     util.GetArtifactFileName(build.ArtifactFilePath),
 		DownloadLink: "/download/" + strconv.Itoa(build.Id),
 	}
@@ -86,9 +88,9 @@ func apiServerStats(context *gin.Context) {
 	mem := util.GetMemoryStats()
 
 	context.IndentedJSON(http.StatusOK, map[string]string{
-		"uptime": strconv.FormatInt(util.GetUptime(), 10),
-		"memory": strconv.FormatUint(mem.Alloc, 10),
-		"num-gc": strconv.FormatUint(uint64(mem.NumGC), 10),
+		"uptime":       strconv.FormatInt(util.GetUptime(), 10),
+		"memory":       strconv.FormatUint(mem.Alloc, 10),
+		"num-gc":       strconv.FormatUint(uint64(mem.NumGC), 10),
 		"num-requests": strconv.FormatUint(uint64(util.GetAmountRequests()), 10),
 	})
 }

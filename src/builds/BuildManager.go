@@ -22,6 +22,8 @@ func CreateBuild() (error, *Build) {
 	log.Println("Creating new build")
 	log.Println("")
 
+	startTime := time.Now()
+
 	// create working directory
 	err := createWorkingDir()
 	if err != nil && !os.IsExist(err) {
@@ -36,8 +38,6 @@ func CreateBuild() (error, *Build) {
 	} else {
 		buildId = Builds[len(Builds)-1].Id + 1
 	}
-
-	buildTime := time.Now().UnixMilli()
 
 	dir := os.Getenv("=D:") + "\\"
 	err, built := buildProject(dir + config.CurrentConfig.BuildScriptPath)
@@ -66,10 +66,12 @@ func CreateBuild() (error, *Build) {
 		return err, nil
 	}
 
-	b := Create(buildId, buildTime, gitHash, gitMessage, 0, artifactFile.Name())
+	buildTime := time.Now().UnixMilli()
+
+	b := Create(buildId, buildTime, gitHash, gitMessage, 0, artifactFile.Name(), startTime)
 
 	log.Println("")
-	log.Println("Finished build (#" + strconv.Itoa(buildId) + ")")
+	log.Println("Finished build (#" + strconv.Itoa(buildId) + ") in " + strconv.Itoa(b.BuildingTime) + "ms")
 	log.Println("")
 	log.Println("------------------------------------------------------")
 	return nil, b

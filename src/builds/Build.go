@@ -5,27 +5,30 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 var Builds []Build
 
 type Build struct {
-	Id               int
-	Time             int64
-	Hash             string
-	Message          string
-	Downloads        int
-	ArtifactFilePath string
+	Id               int    // unique id of the build
+	Time             int64  // timestamp when the build finished
+	Hash             string // the hash of the commit
+	Message          string // the message of the commit
+	Downloads        int    // amount of downloads
+	ArtifactFilePath string // path to artifact file
+	BuildingTime     int    // time it took to build in milliseconds
 }
 
-func Create(id int, time int64, hash string, message string, downloads int, artifactFilePath string) *Build {
+func Create(id int, buildTime int64, hash string, message string, downloads int, artifactFilePath string, startTime time.Time) *Build {
 	b := Build{
 		Id:               id,
-		Time:             time,
+		Time:             buildTime,
 		Hash:             hash,
 		Message:          message,
 		Downloads:        downloads,
 		ArtifactFilePath: artifactFilePath,
+		BuildingTime:     (int)(time.Now().UnixMilli() - startTime.UnixMilli()),
 	}
 
 	Builds = append(Builds, b)
