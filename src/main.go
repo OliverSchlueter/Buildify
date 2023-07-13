@@ -90,7 +90,13 @@ func main() {
 
 	// start http server
 	go api.Start(config.CurrentConfig.Port, admin)
-	log.Println("Started http server")
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		hostname = "localhost"
+	}
+
+	log.Println("Started http server (http://" + hostname + ":" + strconv.Itoa(config.CurrentConfig.Port) + ")")
 
 	// start waiting for cli commands
 	scanner := bufio.NewScanner(os.Stdin)
