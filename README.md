@@ -1,6 +1,7 @@
 # Buildify
 
-Easy build and deploy system
+Lightweight build and deployment system.<br>
+_Made for educational purposes, do not use in production._
 
 ## How to build from source
 
@@ -56,7 +57,3 @@ How to start Buildify: ``$ buildify.exe``
 ``/api/deleteBuild/<id>`` - Deletes a build _(auth required)_
 
 ``/api/server-stats`` - Shows some statistics about the running server
-
-## Example Web UI
-
-There is an example of how to make a UI for the REST API. Read more [here](buildify-web/README.md).
