@@ -79,6 +79,12 @@ func main() {
 		}
 	}()
 
+	// save build metadata after closing application
+	defer func() {
+		log.Println("Saving build metadata")
+		builds.SaveBuildsFile("builds/")
+	}()
+
 	// print memory usage
 	go func() {
 		time.Sleep(time.Second * 5)
