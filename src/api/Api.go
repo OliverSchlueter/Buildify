@@ -111,7 +111,7 @@ func apiBuild(context *gin.Context) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		context.IndentedJSON(http.StatusNotFound, "Please provide a valid build id")
+		context.String(http.StatusNotFound, "Please provide a valid build id")
 		return
 	}
 
@@ -122,12 +122,12 @@ func apiBuild(context *gin.Context) {
 		}
 	}
 
-	context.IndentedJSON(http.StatusNotFound, "Could not find build")
+	context.String(http.StatusNotFound, "Could not find build")
 }
 
 func apiStartBuild(context *gin.Context) {
 	if builds.IsBuilding {
-		context.IndentedJSON(http.StatusLocked, "Please wait, there is already an ongoing build")
+		context.String(http.StatusLocked, "Please wait, there is already an ongoing build")
 		return
 	}
 
@@ -136,7 +136,7 @@ func apiStartBuild(context *gin.Context) {
 	builds.IsBuilding = false
 
 	if err != nil {
-		context.IndentedJSON(http.StatusNotFound, "Something went wrong while building")
+		context.String(http.StatusNotFound, "Something went wrong while building.\nError: "+err.Error())
 		return
 	}
 
@@ -151,7 +151,7 @@ func apiDownload(context *gin.Context) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		context.IndentedJSON(http.StatusNotFound, "Please provide a valid build id")
+		context.String(http.StatusNotFound, "Please provide a valid build id")
 		return
 	}
 
@@ -173,7 +173,7 @@ func apiDownload(context *gin.Context) {
 		}
 	}
 
-	context.IndentedJSON(http.StatusNotFound, "Could not find a build with this id")
+	context.String(http.StatusNotFound, "Could not find a build with this id")
 }
 
 func apiDeleteBuild(context *gin.Context) {
@@ -181,7 +181,7 @@ func apiDeleteBuild(context *gin.Context) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		context.IndentedJSON(http.StatusNotFound, "Please provide a valid build id")
+		context.String(http.StatusNotFound, "Please provide a valid build id")
 		return
 	}
 
@@ -190,14 +190,14 @@ func apiDeleteBuild(context *gin.Context) {
 
 			err := builds.Delete(id, index)
 			if err != nil {
-				context.IndentedJSON(http.StatusInternalServerError, "Could not delete build")
+				context.String(http.StatusInternalServerError, "Could not delete build")
 				return
 			}
 
-			context.IndentedJSON(http.StatusInternalServerError, "Deleted build #"+idStr)
+			context.String(http.StatusInternalServerError, "Deleted build #"+idStr)
 			return
 		}
 	}
 
-	context.IndentedJSON(http.StatusNotFound, "Could not find a build with this id")
+	context.String(http.StatusNotFound, "Could not find a build with this id")
 }
