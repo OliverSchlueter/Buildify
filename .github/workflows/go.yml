@@ -16,5 +16,7 @@ jobs:
         go-version: '1.19'  
     - name: Give permission for make.sh
       run: chmod +x make.sh
+    - name: make bin dir
+      run: mkdir ./bin/static/
     - name: Test and build
       run: ./make.sh
