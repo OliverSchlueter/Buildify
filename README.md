@@ -9,13 +9,13 @@ _Made for educational purposes, do not use in production._
 
 1. clone the repo ``git clone https://github.com/OliverSchlueter/Buildify.git``
 2. run ``make.bat``
-3. executable will be located at: ``buildify-core/bin/buildify.exe``
+3. executable will be located at: ``bin/buildify.exe``
 
 ### Linux
 
 1. clone the repo ``git clone https://github.com/OliverSchlueter/Buildify.git``
 2. run ``make.sh``
-3. executable will be located at: ``buildify-core/bin/buildify``
+3. executable will be located at: ``bin/buildify``
 
 
 ## How to use
