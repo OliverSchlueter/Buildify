@@ -20,7 +20,14 @@ _Made for educational purposes, do not use in production._
 
 ## How to use
 
-**Example: java gradle project**
+1. download buildify.exe from github releases or build yourself
+2. run buildify.exe and let it generate some files
+3. stop buildify
+4. edit config.json as you wish
+5. create your build script (and set up the work directory)
+6. start buildify
+
+**Example config and build script for a java gradle project**
 
 config.json
 ```json
@@ -32,17 +39,16 @@ config.json
 ```
 
 build.bat
-````batch
+```batch
 cd work
 
 git fetch
 git pull
-gradlew shadowJar
+
+gradlew build
 
 cd ../
-````
-
-How to start Buildify: ``$ buildify.exe``
+```
 
 ### The REST API
 
