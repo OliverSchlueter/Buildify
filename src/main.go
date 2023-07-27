@@ -149,10 +149,16 @@ func getAdminUser() util.AuthUser {
 	var admin util.AuthUser
 
 	adminAuthFile, err := os.OpenFile("admin_auth.json", os.O_RDWR, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer adminAuthFile.Close()
 
 	if os.IsNotExist(err) {
 		uuid, err := guid.NewV4()
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		admin = util.AuthUser{
 			Username: "admin",
@@ -160,6 +166,10 @@ func getAdminUser() util.AuthUser {
 		}
 
 		adminAuthFile, err = os.Create("admin_auth.json")
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		defaultAdmin, _ := json.MarshalIndent(admin, "", "\t")
 		_, err = adminAuthFile.Write(defaultAdmin)
 
