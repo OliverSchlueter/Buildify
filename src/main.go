@@ -37,43 +37,44 @@ func main() {
 	logWriter := io.MultiWriter(os.Stdout, logFile)
 	gin.DefaultWriter = logWriter
 	log.SetOutput(logWriter)
+	log.SetFlags(0) // remove date and time in logger
 
-	log.Println("-----------------------")
-	log.Println("Starting Building...")
-	log.Println("-----------------------")
+	util.LogInfo("-----------------------")
+	util.LogInfo("Starting Building...")
+	util.LogInfo("-----------------------")
 
 	// loading config
 	err = config.LoadConfig()
 	if err != nil {
-		log.Println("Could not load config.json")
+		util.LogInfo("Could not load config.json")
 		log.Fatal(err)
 		return
 	}
 
-	log.Println("Loaded config.json")
-	log.Println("- Port: " + strconv.Itoa(config.CurrentConfig.Port))
-	log.Println("- Build script path: " + config.CurrentConfig.BuildScriptPath)
-	log.Println("- Artifact path: " + config.CurrentConfig.ArtifactPath)
-	log.Println("")
+	util.LogInfo("Loaded config.json")
+	util.LogInfo("- Port: " + strconv.Itoa(config.CurrentConfig.Port))
+	util.LogInfo("- Build script path: " + config.CurrentConfig.BuildScriptPath)
+	util.LogInfo("- Artifact path: " + config.CurrentConfig.ArtifactPath)
+	util.LogInfo("")
 
 	// loading admin user
 	admin := getAdminUser()
-	log.Println("Loaded admin user")
+	util.LogInfo("Loaded admin user")
 
 	// loading builds
 	err = builds.LoadBuildsFile("builds/")
 	if err != nil {
-		log.Println("Could not load build metadata file")
+		util.LogInfo("Could not load build metadata file")
 	}
 
-	log.Println("Loaded build metadata")
+	util.LogInfo("Loaded build metadata")
 
 	// starting auto save
 	go func() {
 		time.Sleep(time.Minute * 2)
 
 		for {
-			log.Println("Auto saving build metadata")
+			util.LogInfo("Auto saving build metadata")
 			builds.SaveBuildsFile("builds/")
 			time.Sleep(time.Minute * 5)
 		}
@@ -81,7 +82,7 @@ func main() {
 
 	// save build metadata after closing application
 	defer func() {
-		log.Println("Saving build metadata")
+		util.LogInfo("Saving build metadata")
 		builds.SaveBuildsFile("builds/")
 	}()
 
@@ -102,7 +103,7 @@ func main() {
 		hostname = "localhost"
 	}
 
-	log.Println("Started http server (http://" + hostname + ":" + strconv.Itoa(config.CurrentConfig.Port) + ")")
+	util.LogInfo("Started http server (http://" + hostname + ":" + strconv.Itoa(config.CurrentConfig.Port) + ")")
 
 	// start waiting for cli commands
 	scanner := bufio.NewScanner(os.Stdin)
@@ -120,23 +121,23 @@ func main() {
 
 		switch cmd {
 		case "help":
-			log.Println("--------------------------------------")
-			log.Println("help - shows this menu")
-			log.Println("status - shows the server status")
-			log.Println("stop - stops the application")
-			log.Println("clear|cls - clears the terminal")
-			log.Println("--------------------------------------")
+			util.LogInfo("--------------------------------------")
+			util.LogInfo("help - shows this menu")
+			util.LogInfo("status - shows the server status")
+			util.LogInfo("stop - stops the application")
+			util.LogInfo("clear|cls - clears the terminal")
+			util.LogInfo("--------------------------------------")
 		case "stop":
-			log.Println("Stopping Buildify")
+			util.LogInfo("Stopping Buildify")
 			builds.SaveBuildsFile("builds/")
 			return
 		case "status":
-			log.Println("--------------------------------------")
-			log.Println("Status: " + util.ColorGreen + "Running" + util.ColorReset)
+			util.LogInfo("--------------------------------------")
+			util.LogInfo("Status: " + util.ColorGreen + "Running" + util.ColorReset)
 			util.PrintUptime()
 			util.PrintMemUsage()
 			util.PrintAmountRequests()
-			log.Println("--------------------------------------")
+			util.LogInfo("--------------------------------------")
 		case "clear":
 		case "cls":
 			fmt.Println("\033[2J")
@@ -166,7 +167,7 @@ func getAdminUser() util.AuthUser {
 			log.Fatal(err)
 		}
 
-		log.Println("Generated default admin user (admin_auth.json)")
+		util.LogInfo("Generated default admin user (admin_auth.json)")
 	} else {
 		adminAuthFileContent, err := os.ReadFile("admin_auth.json")
 		if err != nil {

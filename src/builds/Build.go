@@ -1,8 +1,8 @@
 package builds
 
 import (
+	"Buildify/util"
 	"encoding/json"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -35,7 +35,7 @@ func Create(id int, buildTime int64, hash string, message string, downloads int,
 
 	err := SaveBuildsFile("builds/")
 	if err != nil {
-		log.Println("Could not save build metadata")
+		util.LogInfo("Could not save build metadata")
 		return nil
 	}
 
@@ -45,8 +45,8 @@ func Create(id int, buildTime int64, hash string, message string, downloads int,
 func Delete(id int, index int) error {
 	err := os.RemoveAll("builds/build-" + strconv.Itoa(id) + "/")
 	if err != nil {
-		log.Println("Could not delete build " + strconv.Itoa(id))
-		log.Println(err)
+		util.LogInfo("Could not delete build " + strconv.Itoa(id))
+		util.LogInfo(err.Error())
 		return err
 	}
 
@@ -54,7 +54,7 @@ func Delete(id int, index int) error {
 
 	err = SaveBuildsFile("builds/")
 	if err != nil {
-		log.Println("Could not save build metadata")
+		util.LogInfo("Could not save build metadata")
 	}
 
 	return nil

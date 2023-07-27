@@ -22,6 +22,27 @@ const (
 	ColorYellowBg = "\033[43m"
 )
 
+func Log(level string, message string) {
+	time := time.Now().Format("2006-01-02 15:04:05")
+	log.Printf("[%s] [%s]: %s", time, level, message)
+}
+
+func LogInfo(message string) {
+	Log("INFO", message)
+}
+
+func LogWarning(message string) {
+	Log("WARNING", message)
+}
+
+func LogError(message string) {
+	Log("ERROR", message)
+}
+
+func LogDebug(message string) {
+	Log("DEBUG", message)
+}
+
 func FastCopyFile(source, destination *os.File) error {
 	buf := make([]byte, 4096)
 	for {

@@ -4,7 +4,6 @@ import (
 	"Buildify/config"
 	"Buildify/util"
 	"errors"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -17,17 +16,17 @@ import (
 var IsBuilding bool = false
 
 func CreateBuild() (error, *Build) {
-	log.Println("------------------------------------------------------")
-	log.Println("")
-	log.Println("Creating new build")
-	log.Println("")
+	util.LogInfo("------------------------------------------------------")
+	util.LogInfo("")
+	util.LogInfo("Creating new build")
+	util.LogInfo("")
 
 	startTime := time.Now()
 
 	// create working directory
 	err := createWorkingDir()
 	if err != nil && !os.IsExist(err) {
-		log.Println(err)
+		util.LogInfo(err.Error())
 		return err, nil
 	}
 
@@ -42,7 +41,7 @@ func CreateBuild() (error, *Build) {
 	dir := os.Getenv("=D:") + "\\"
 	err, built := buildProject(dir + config.CurrentConfig.BuildScriptPath)
 	if err != nil {
-		log.Println(err)
+		util.LogInfo(err.Error())
 		return err, nil
 	}
 
@@ -53,7 +52,7 @@ func CreateBuild() (error, *Build) {
 	// get artifact file
 	artifactFile, err := getArtifactFile(config.CurrentConfig.ArtifactPath, buildId)
 	if err != nil {
-		log.Println(err)
+		util.LogInfo(err.Error())
 		return err, nil
 	}
 
@@ -62,7 +61,7 @@ func CreateBuild() (error, *Build) {
 	// get git hash
 	err, gitHash, gitMessage := getGitInfo()
 	if err != nil {
-		log.Println(err)
+		util.LogInfo(err.Error())
 		return err, nil
 	}
 
@@ -70,21 +69,21 @@ func CreateBuild() (error, *Build) {
 
 	b := Create(buildId, buildTime, gitHash, gitMessage, 0, artifactFile.Name(), startTime)
 
-	log.Println("")
-	log.Println("Finished build (#" + strconv.Itoa(buildId) + ") in " + strconv.Itoa(b.BuildingTime) + "ms")
-	log.Println("")
-	log.Println("------------------------------------------------------")
+	util.LogInfo("")
+	util.LogInfo("Finished build (#" + strconv.Itoa(buildId) + ") in " + strconv.Itoa(b.BuildingTime) + "ms")
+	util.LogInfo("")
+	util.LogInfo("------------------------------------------------------")
 	return nil, b
 }
 
 func createWorkingDir() error {
-	log.Println("Creating working directory (./work/)")
+	util.LogInfo("Creating working directory (./work/)")
 	err := os.Mkdir("work", os.ModePerm)
 	return err
 }
 
 func buildProject(buildScript string) (error, bool) {
-	log.Println("Building the project (" + buildScript + ")")
+	util.LogInfo("Building the project (" + buildScript + ")")
 	command := exec.Command(buildScript)
 	// command.Stdout = os.Stdout
 
@@ -98,7 +97,7 @@ func buildProject(buildScript string) (error, bool) {
 }
 
 func getArtifactFile(path string, buildId int) (*os.File, error) {
-	log.Println("Getting the artifact file")
+	util.LogInfo("Getting the artifact file")
 
 	matches, err := filepath.Glob(path)
 	if err != nil {
@@ -146,16 +145,16 @@ func getArtifactFile(path string, buildId int) (*os.File, error) {
 }
 
 func getGitInfo() (error, string, string) {
-	log.Println("Getting information about the latest commit")
+	util.LogInfo("Getting information about the latest commit")
 	gitApp, err := git.PlainOpen("work")
 	if err != nil {
-		log.Println(err)
+		util.LogInfo(err.Error())
 		return err, "", ""
 	}
 
 	head, err := gitApp.Head()
 	if err != nil {
-		log.Println(err)
+		util.LogInfo(err.Error())
 		return err, "", ""
 	}
 
@@ -163,7 +162,7 @@ func getGitInfo() (error, string, string) {
 
 	commit, err := gitApp.CommitObject(hash)
 	if err != nil {
-		log.Println(err)
+		util.LogInfo(err.Error())
 		return err, "", ""
 	}
 
