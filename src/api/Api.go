@@ -4,7 +4,7 @@ import (
 	"Buildify/builds"
 	"Buildify/config"
 	"Buildify/util"
-	"io/os"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -126,7 +126,7 @@ func apiGetBuildScript(context *gin.Context) {
 }
 
 func apiSetBuildScript(context *gin.Context) {
-	newScript, err := os.ReadAll(context.Request.Body)
+	newScript, err := io.ReadAll(context.Request.Body)
 	if err != nil {
 		context.String(http.StatusNotFound, "Could not update build script")
 		return
@@ -140,7 +140,7 @@ func apiGetArtifactFilePath(context *gin.Context) {
 }
 
 func apiSetArtifactFilePath(context *gin.Context) {
-	path, err := os.ReadAll(context.Request.Body)
+	path, err := io.ReadAll(context.Request.Body)
 	if err != nil {
 		context.String(http.StatusNotFound, "Could not update artifact file path")
 		return
