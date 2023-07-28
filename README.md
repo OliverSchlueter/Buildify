@@ -63,3 +63,7 @@ cd ../
 ``/api/deleteBuild/<id>`` - Deletes a build _(auth required)_
 
 ``/api/server-stats`` - Shows some statistics about the running server
+
+``/api/build-script`` (GET) - Shows the current build script
+
+``/api/build-script`` (POST) - Sets the current build script (put the new script in the body)

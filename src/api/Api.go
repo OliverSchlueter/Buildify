@@ -2,7 +2,9 @@ package api
 
 import (
 	"Buildify/builds"
+	"Buildify/config"
 	"Buildify/util"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -50,8 +52,11 @@ func Start(port int, admin util.AuthUser) {
 	router := gin.Default()
 	router.LoadHTMLGlob("static/*")
 	router.Use(middleware)
+
+	// web
 	router.GET("/", webRoot)
-	router.GET("/api/server-stats", apiServerStats)
+
+	// build management
 	router.GET("/api/builds", apiBuilds)
 	router.GET("/api/build/:id", apiBuild)
 	router.GET("/api/download/:id", apiDownload)
@@ -59,15 +64,23 @@ func Start(port int, admin util.AuthUser) {
 	startDownload := router.Group("/api/startBuild", gin.BasicAuth(map[string]string{
 		admin.Username: admin.Password,
 	}))
-
 	startDownload.GET("/", apiStartBuild)
 
 	deleteBuild := router.Group("/api/deleteBuild/:id", gin.BasicAuth(map[string]string{
 		admin.Username: admin.Password,
 	}))
-
 	deleteBuild.GET("/", apiDeleteBuild)
 
+	// server settings & stats
+	router.GET("/api/server-stats", apiServerStats)
+
+	buildScript := router.Group("/api/build-script", gin.BasicAuth(map[string]string{
+		admin.Username: admin.Password,
+	}))
+	buildScript.GET("/", apiGetBuildScript)
+	buildScript.POST("/", apiSetBuildScript)
+
+	// starting server
 	err := router.Run("0.0.0.0:" + strconv.Itoa(port))
 	if err != nil {
 		log.Fatal("Could not start REST API")
@@ -93,6 +106,27 @@ func apiServerStats(context *gin.Context) {
 		"num-gc":       strconv.FormatUint(uint64(mem.NumGC), 10),
 		"num-requests": strconv.FormatUint(uint64(util.GetAmountRequests()), 10),
 	})
+}
+
+func apiGetBuildScript(context *gin.Context) {
+	script, err := ioutil.ReadFile(config.CurrentConfig.BuildScriptPath)
+
+	if err != nil {
+		context.String(http.StatusNotFound, "Could not read build script")
+		return
+	}
+
+	context.String(http.StatusOK, string(script))
+}
+
+func apiSetBuildScript(context *gin.Context) {
+	newScript, err := ioutil.ReadAll(context.Request.Body)
+	if err != nil {
+		context.String(http.StatusNotFound, "Could not update build script")
+		return
+	}
+	ioutil.WriteFile(config.CurrentConfig.BuildScriptPath, newScript, os.ModePerm)
+	context.Status(http.StatusOK)
 }
 
 func apiBuilds(context *gin.Context) {
