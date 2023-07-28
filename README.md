@@ -67,3 +67,7 @@ cd ../
 ``/api/build-script`` (GET) - Shows the current build script
 
 ``/api/build-script`` (POST) - Sets the current build script (put the new script in the body)
+
+``/api/artifact-file-path`` (GET) - Shows the current artifact file path
+
+``/api/artifact-file-path`` (POST) - Sets the current artifact file path (put the new path in the body)

@@ -80,6 +80,12 @@ func Start(port int, admin util.AuthUser) {
 	buildScript.GET("/", apiGetBuildScript)
 	buildScript.POST("/", apiSetBuildScript)
 
+	artifactFilePath := router.Group("/api/artifact-file-path", gin.BasicAuth(map[string]string{
+		admin.Username: admin.Password,
+	}))
+	artifactFilePath.GET("/", apiGetArtifactFilePath)
+	artifactFilePath.POST("/", apiSetArtifactFilePath)
+
 	// starting server
 	err := router.Run("0.0.0.0:" + strconv.Itoa(port))
 	if err != nil {
@@ -126,6 +132,23 @@ func apiSetBuildScript(context *gin.Context) {
 		return
 	}
 	ioutil.WriteFile(config.CurrentConfig.BuildScriptPath, newScript, os.ModePerm)
+	context.Status(http.StatusOK)
+}
+
+func apiGetArtifactFilePath(context *gin.Context) {
+	context.String(http.StatusOK, config.CurrentConfig.ArtifactPath)
+}
+
+func apiSetArtifactFilePath(context *gin.Context) {
+	path, err := ioutil.ReadAll(context.Request.Body)
+	if err != nil {
+		context.String(http.StatusNotFound, "Could not update artifact file path")
+		return
+	}
+
+	config.CurrentConfig.ArtifactPath = string(path)
+	config.CurrentConfig.Save()
+
 	context.Status(http.StatusOK)
 }
 
